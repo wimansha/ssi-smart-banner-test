@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting...</title>
+<script>
+
+        function getDeepLink() {
+
+            const urlParams = new URLSearchParams(window.location.search);
+
+            return urlParams.get("link");  // Extract 'link' parameter from URL
+
+        }
+ 
+        function clearURL() {
+
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+        }
+ 
+        function isAndroid() {
+
+            // Use modern method (if supported)
+
+            if (navigator.userAgentData && navigator.userAgentData.platform) {
+
+                return navigator.userAgentData.platform.toLowerCase() === "android";
+
+            }
+
+            // Fallback: Classic regex-based detection
+
+            return /android/i.test(navigator.userAgent);
+
+        }
+ 
+        function isIOS() {
+
+            return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        }
+ 
+        function openAppOrStore() {
+
+            const appLink = getDeepLink() || "myapp://default"; // Ensure a valid link is used
+
+            const iosStoreLink = "https://apps.apple.com/gb/app/saysomethingin/id6476493414";
+
+            const androidStoreLink = "https://play.google.com/store/apps/details?id=com.automagic.a3f&referrer=" + encodeURIComponent(appLink);
+
+            const webFallback = "https://app.saysomethingin.com/";
+ 
+            clearURL(); // Clear the URL after extracting deep link
+ 
+            console.log("User-Agent:", navigator.userAgent);
+
+            console.log("User-Agent Data:", navigator.userAgentData);
+
+            console.log("Detected Deep Link:", appLink);
+ 
+            if (isIOS()) {
+
+                console.log("iOS device detected");
+ 
+                let iframe = document.createElement("iframe");
+
+                iframe.style.display = "none";
+
+                iframe.src = appLink;
+
+                document.body.appendChild(iframe);
+ 
+                setTimeout(() => {
+
+                    window.location.href = iosStoreLink;
+
+                }, 2000);
+
+            } 
+
+            else if (isAndroid()) {
+
+                console.log("Android device detected");
+ 
+                // Open the app using deep linking
+
+                window.location.href = appLink;
+ 
+                setTimeout(() => {
+
+                    if (document.visibilityState === 'visible') {
+
+                        // Show an alert before redirecting to the Play Store
+
+                        if (confirm("It looks like the app is not installed. Click OK to download it from the Play Store.")) {
+
+                            window.location.href = androidStoreLink;
+
+                        }
+
+                    }
+
+                }, 2000);
+
+            } 
+
+            else {
+
+                console.log("Neither Android nor iOS detected, redirecting to web");
+
+                window.location.href = webFallback;
+
+            }
+
+        }
+ 
+        // Trigger redirection automatically when the page loads
+
+        window.onload = openAppOrStore;
+</script>
+</head>
+<body>
+<h2>Redirecting...</h2>
+</body>
+</html>
+
+ 

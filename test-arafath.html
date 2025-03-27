@@ -1,129 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Redirecting...</title>
-<script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saysomethingin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0 20px;
+    }
 
-        function getDeepLink() {
 
-            const urlParams = new URLSearchParams(window.location.search);
+    .logo {
+      max-width: 250px;
+      height: auto;
+      margin-bottom: 20px;
+    }
 
-            return urlParams.get("link");  // Extract 'link' parameter from URL
 
-        }
- 
-        function clearURL() {
+    .message {
+      color: #555;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
 
-            window.history.replaceState({}, document.title, window.location.pathname);
 
-        }
- 
-        function isAndroid() {
+    .app-store-btn, .open-link-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007aff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 5px;
+    }
+  </style>
+  <script>
+    let fullLink;
 
-            // Use modern method (if supported)
 
-            if (navigator.userAgentData && navigator.userAgentData.platform) {
+    function updateMetaTag() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const link = urlParams.get("extralink");
+      fullLink = `https://saysomethingin.com/${link}`;
 
-                return navigator.userAgentData.platform.toLowerCase() === "android";
 
-            }
+      const meta = document.createElement('meta');
+      meta.name = "apple-itunes-app";
+      meta.content = `app-id=6476493414, app-argument=${fullLink}`;
+      document.head.appendChild(meta);
+    }
 
-            // Fallback: Classic regex-based detection
 
-            return /android/i.test(navigator.userAgent);
+    function isChromeOniOS() {
+      return /CriOS/.test(navigator.userAgent);
+    }
 
-        }
- 
-        function isIOS() {
 
-            return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    function goToAppStore() {
+      window.location.href = 'https://apps.apple.com/app/id6476493414';
+    }
 
-        }
- 
-        function openAppOrStore() {
 
-            const appLink = getDeepLink() || "myapp://default"; // Ensure a valid link is used
+   function openFullLink() {
+   const urlParams = new URLSearchParams(window.location.search);
+   const link = urlParams.get("extralink");
+	     
+   const linkToOpen = `https://saysomethingin.com/.well-known/index.html?link=https://saysomethingin.com/${link}`;
+   alert(linkToOpen); // Show the alert with the correctly built URL
+   window.location.href = linkToOpen; // Optional if you want to redirect
+    }
 
-            const iosStoreLink = "https://apps.apple.com/gb/app/saysomethingin/id6476493414";
 
-            const androidStoreLink = "https://play.google.com/store/apps/details?id=com.automagic.a3f&referrer=" + encodeURIComponent(appLink);
 
-            const webFallback = "https://app.saysomethingin.com/";
- 
-            clearURL(); // Clear the URL after extracting deep link
- 
-            console.log("User-Agent:", navigator.userAgent);
+    function redirectToSafari() {
+      if (isChromeOniOS()) {
+        document.body.innerHTML = `
+          <p class="message">You have opened the link in chrome,To continue, please install our app from the App Store. After installation, tap on the original link shared again to register as a partner.</p>
+          <button class="app-store-btn" onclick="goToAppStore()">Open in App Store</button>
+        `;
+      }
+    }
 
-            console.log("User-Agent Data:", navigator.userAgentData);
 
-            console.log("Detected Deep Link:", appLink);
- 
-            if (isIOS()) {
-
-                console.log("iOS device detected");
- 
-                let iframe = document.createElement("iframe");
-
-                iframe.style.display = "none";
-
-                iframe.src = appLink;
-
-                document.body.appendChild(iframe);
- 
-                setTimeout(() => {
-
-                    window.location.href = iosStoreLink;
-
-                }, 2000);
-
-            } 
-
-            else if (isAndroid()) {
-
-                console.log("Android device detected");
- 
-                // Open the app using deep linking
-
-                window.location.href = appLink;
- 
-                setTimeout(() => {
-
-                    if (document.visibilityState === 'visible') {
-
-                        // Show an alert before redirecting to the Play Store
-
-                        if (confirm("It looks like the app is not installed. Click OK to download it from the Play Store.")) {
-
-                            window.location.href = androidStoreLink;
-
-                        }
-
-                    }
-
-                }, 2000);
-
-            } 
-
-            else {
-
-                console.log("Neither Android nor iOS detected, redirecting to web");
-
-                window.location.href = webFallback;
-
-            }
-
-        }
- 
-        // Trigger redirection automatically when the page loads
-
-        window.onload = openAppOrStore;
-</script>
+    window.onload = function() {
+      updateMetaTag();
+      redirectToSafari();
+    };
+  </script>
 </head>
 <body>
-<h2>Redirecting...</h2>
+  <img src="Logo.svg" alt="Logo" class="logo">
+  <h1>Saysomethingin iOS App</h1>
+  <p>Tap on the iOS app banner to install iOS app. After installation, tap on this link again to register as a partner.</p>
+  <p>(App banner will be only visible in iOS devices)</p>
 </body>
 </html>
-
- 
